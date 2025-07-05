@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: '/api', // 或你的后端API前缀
+  baseURL: '/api',
   timeout: 10000,
 });
 

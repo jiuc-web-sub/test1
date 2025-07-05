@@ -12,7 +12,7 @@ export default function Login() {
     e.preventDefault();
     setError('');
     try {
-      const res = await login({ username, password });
+      const res = await login(username, password);
       if (res.data.code === 0) {
         localStorage.setItem('token', res.data.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.data.user));

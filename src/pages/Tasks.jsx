@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchTasks, createTask, updateTask, deleteTask } from '../services/taskService';
 
 function getTaskColorClass(dueDate) {
@@ -18,6 +19,14 @@ export default function Tasks() {
   const [newCategory, setNewCategory] = useState('');
   const [newTags, setNewTags] = useState('');
   const [expandedIds, setExpandedIds] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+    }
+  }, []);
 
   useEffect(() => {
     fetchTasks().then(res => {
