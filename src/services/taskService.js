@@ -1,13 +1,13 @@
 import request from '../utils/request';
 
 // 获取任务列表
-export const fetchTasks = () => request.get('/tasks');
+export const fetchTasks = () => request.get('/tasks'); // /api/tasks
 
 // 新建任务
-export const createTask = (task) => request.post('/tasks', task);
+export const createTask = (data) => request.post('/tasks', data);
 
 // 更新任务
-export const updateTask = (id, task) => request.put(`/tasks/${id}`, task);
+export const updateTask = (id, data) => request.put(`/tasks/${id}`, data);
 
 // 软删除任务
 export const deleteTask = (id) => request.delete(`/tasks/${id}`);

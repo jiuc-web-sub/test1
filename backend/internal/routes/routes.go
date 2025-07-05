@@ -11,7 +11,7 @@ import (
 func RegisterRoutes(r *gin.Engine, db *gorm.DB, jwtSecret string) {
 	authController := controllers.NewAuthController(db, jwtSecret)
 	taskController := controllers.NewTaskController(db)
-	userController := controllers.NewUserController(db) // ★新增
+	userController := controllers.NewUserController(db)
 
 	// 公共路由
 	r.POST("/api/auth/login", authController.Login)
