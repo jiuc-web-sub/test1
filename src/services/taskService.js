@@ -11,3 +11,7 @@ export const updateTask = (id, task) => request.put(`/tasks/${id}`, task);
 
 // 删除任务
 export const deleteTask = (id) => request.delete(`/tasks/${id}`);
+
+// 彻底删除任务
+export const removeTaskPermanently = (id) => request.delete(`/tasks/permanent/${id}`);
+

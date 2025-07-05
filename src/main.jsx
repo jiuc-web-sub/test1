@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes';
 import './assets/css/variables.css';
 import './assets/css/App.css';
 import { SettingsProvider } from './contexts/SettingsContext';
@@ -10,7 +11,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider>
       <SettingsProvider>
-        <App />
+        <RouterProvider router={router} />
       </SettingsProvider>
     </ThemeProvider>
   </React.StrictMode>
