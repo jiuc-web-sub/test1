@@ -23,11 +23,18 @@
   color: #fff;
 }
 .nav-links a {
-  margin-right: 16px;
-  color: #fff;
+  margin-right: 32px;
+  color: var(--color-nav-text, #fff);
   text-decoration: none;
   font-weight: bold;
   white-space: nowrap;
+  font-family: inherit;
+  font-size: 20px;
+  transition: color 0.2s, background 0.2s;
+  letter-spacing: 1px;
+  min-width: 64px; /* 防止跳动 */
+  display: inline-block;
+  text-align: center;
 }
 .nav-links a:last-child {
   margin-right: 0;

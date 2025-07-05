@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	"gorm.io/gorm"
 )
 
@@ -16,16 +14,14 @@ type User struct {
 }
 
 type Task struct {
-	ID          uint      `gorm:"primaryKey" json:"id"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	DueDate     time.Time `json:"dueDate"`
-	UserID      uint      `json:"userId"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
-	Category    string    `json:"category"`
-	Tags        string    `json:"tags"`
-	IsDeleted   bool      `json:"isDeleted" gorm:"default:false"`
+	gorm.Model
+	Title       string `json:"title"`
+	DueDate     string `json:"dueDate"`
+	Description string `json:"description"`
+	Category    string `json:"category"`
+	Tags        string `json:"tags"`      // 用逗号分隔的标签
+	IsDeleted   bool   `json:"isDeleted"` // 软删除标记
+	UserID      uint   `json:"userId"`
 }
 
 type TaskResource struct {

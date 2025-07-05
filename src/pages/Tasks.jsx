@@ -32,7 +32,7 @@ export default function Tasks() {
       dueDate: newDueDate,
       description: newDesc,
       category: newCategory,
-      tags: newTags,
+      tags: newTags, // 确保这里传递了标签
     });
     if (res.data.code === 0) {
       setTasks([...tasks, res.data.data]);
@@ -41,8 +41,6 @@ export default function Tasks() {
       setNewDesc('');
       setNewCategory('');
       setNewTags('');
-    } else {
-      alert(res.data.msg || '添加失败');
     }
   };
 
@@ -81,6 +79,14 @@ export default function Tasks() {
     }
   };
 
+  const handleTagsChange = async (id, value) => {
+    const task = tasks.find(t => t.id === id);
+    const res = await updateTask(id, { ...task, tags: value });
+    if (res.data.code === 0) {
+      setTasks(tasks.map(t => t.id === id ? { ...t, tags: value } : t));
+    }
+  };
+
   return (
     <div>
       <h1>任务列表</h1>
@@ -90,13 +96,13 @@ export default function Tasks() {
           onChange={e => setNewTask(e.target.value)}
           placeholder="新任务名称"
         />
-        <label style={{ marginLeft: 8, color: '#888' }}>
+        <label style={{ marginLeft: 16, color: '#888', minWidth: 80, display: 'inline-block', fontSize: 16 }}>
           截止日期
           <input
             type="date"
             value={newDueDate}
             onChange={e => setNewDueDate(e.target.value)}
-            style={{ marginLeft: 4 }}
+            style={{ marginLeft: 4, fontSize: 16 }}
           />
         </label>
         <select
@@ -142,7 +148,16 @@ export default function Tasks() {
             </div>
             <div style={{ marginTop: 8, display: 'flex', gap: 24, alignItems: 'center' }}>
               <span style={{ color: '#888', fontSize: 13 }}>分类：{task.category || '无'}</span>
-              <span style={{ color: '#888', fontSize: 13 }}>标签：{task.tags ? task.tags.split(',').join('、') : '无'}</span>
+              <span style={{ color: '#888', fontSize: 13 }}>
+                标签：
+                <input
+                  type="text"
+                  value={task.tags || ''}
+                  onChange={e => handleTagsChange(task.id, e.target.value)}
+                  style={{ width: 120, marginLeft: 4 }}
+                  placeholder="用逗号分隔"
+                />
+              </span>
             </div>
             <div style={{ marginTop: 8 }}>
               截止时间：

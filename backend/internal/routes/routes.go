@@ -25,7 +25,19 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB, jwtSecret string) {
 			auth.POST("/tasks", taskController.CreateTask)
 			auth.PUT("/tasks/:id", taskController.UpdateTask)
 			auth.DELETE("/tasks/:id", taskController.DeleteTask)
-			auth.DELETE("/tasks/permanent/:id", taskController.PermanentlyDeleteTask)
+			auth.DELETE("/tasks/permanent/:id", taskController.RemoveTaskPermanently)
 		}
+	}
+}
+
+func RegisterTaskRoutes(r *gin.Engine, db *gorm.DB) {
+	tc := &controllers.TaskController{DB: db}
+	task := r.Group("/api/tasks")
+	{
+		task.GET("", tc.ListTasks)
+		task.POST("", tc.CreateTask)
+		task.PUT("/:id", tc.UpdateTask)
+		task.DELETE("/:id", tc.DeleteTask)                      // 软删除
+		task.DELETE("/permanent/:id", tc.RemoveTaskPermanently) // 彻底删除
 	}
 }

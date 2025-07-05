@@ -9,6 +9,7 @@ export default function Trash() {
     });
   }, []);
 
+  // 恢复任务
   const handleRestore = async (id) => {
     const task = tasks.find(t => t.id === id);
     const res = await updateTask(id, { ...task, isDeleted: false });

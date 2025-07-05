@@ -47,14 +47,17 @@ func (tc *TaskController) CreateTask(c *gin.Context) {
 		Title       string `json:"title" binding:"required"`
 		Description string `json:"description"`
 		DueDate     string `json:"dueDate" binding:"required"`
+		Category    string `json:"category"`
+		Tags        string `json:"tags"`
+		IsDeleted   bool   `json:"isDeleted"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": 1, "msg": "参数错误"})
 		return
 	}
 
-	due, err := time.Parse("2006-01-02", input.DueDate)
-	if err != nil {
+	// 只做格式校验，不需要用 due 变量
+	if _, err := time.Parse("2006-01-02", input.DueDate); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": 1, "msg": "截止日期格式错误"})
 		return
 	}
@@ -62,7 +65,10 @@ func (tc *TaskController) CreateTask(c *gin.Context) {
 	task := models.Task{
 		Title:       input.Title,
 		Description: input.Description,
-		DueDate:     due,
+		DueDate:     input.DueDate,
+		Category:    input.Category,
+		Tags:        input.Tags,
+		IsDeleted:   input.IsDeleted,
 		UserID:      userID.(uint),
 	}
 
@@ -74,55 +80,54 @@ func (tc *TaskController) CreateTask(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "创建成功", "data": task})
 }
 
-// 更新任务
+// 更新任务（支持 tags 和 isDeleted 字段）
 func (tc *TaskController) UpdateTask(c *gin.Context) {
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"code": 1, "msg": "未授权"})
-		return
-	}
-
+	userID, _ := c.Get("userID")
 	id := c.Param("id")
 	var task models.Task
 	if err := tc.DB.Where("id = ? AND user_id = ?", id, userID).First(&task).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"code": 1, "msg": "任务不存在"})
+		c.JSON(404, gin.H{"code": 1, "msg": "任务不存在"})
 		return
 	}
 
-	var input struct {
+	var req struct {
 		Title       string `json:"title"`
-		Description string `json:"description"`
 		DueDate     string `json:"dueDate"`
+		Description string `json:"description"`
+		Category    string `json:"category"`
+		Tags        string `json:"tags"`
+		IsDeleted   *bool  `json:"isDeleted"`
 	}
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"code": 1, "msg": "参数错误"})
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"code": 1, "msg": "参数错误"})
 		return
 	}
 
-	if input.Title != "" {
-		task.Title = input.Title
+	if req.Title != "" {
+		task.Title = req.Title
 	}
-	if input.Description != "" {
-		task.Description = input.Description
+	if req.DueDate != "" {
+		task.DueDate = req.DueDate
 	}
-	if input.DueDate != "" {
-		due, err := time.Parse("2006-01-02", input.DueDate)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"code": 1, "msg": "截止日期格式错误"})
-			return
-		}
-		task.DueDate = due
+	if req.Description != "" {
+		task.Description = req.Description
+	}
+	if req.Category != "" {
+		task.Category = req.Category
+	}
+	task.Tags = req.Tags // 允许 tags 为空字符串
+	if req.IsDeleted != nil {
+		task.IsDeleted = *req.IsDeleted
 	}
 
 	if err := tc.DB.Save(&task).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"code": 1, "msg": "更新任务失败"})
+		c.JSON(500, gin.H{"code": 1, "msg": "更新失败"})
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "更新成功", "data": task})
+	c.JSON(200, gin.H{"code": 0, "msg": "更新成功", "data": task})
 }
 
-// 软删除任务
+// 软删除任务（移入回收站）
 func (tc *TaskController) DeleteTask(c *gin.Context) {
 	userID, _ := c.Get("userID")
 	id := c.Param("id")
@@ -184,28 +189,26 @@ func (tc *TaskController) UploadTaskResource(c *gin.Context) {
 	c.JSON(http.StatusCreated, resource)
 }
 
-// PermanentlyDeleteTask 彻底删除任务
-func (tc *TaskController) PermanentlyDeleteTask(c *gin.Context) {
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(401, gin.H{"code": 1, "msg": "未授权"})
-		return
-	}
+// 彻底删除任务
+func (tc *TaskController) RemoveTaskPermanently(c *gin.Context) {
+	userID, _ := c.Get("userID")
 	id := c.Param("id")
-	var task models.Task
-	if err := tc.DB.Where("id = ? AND user_id = ?", id, userID).First(&task).Error; err != nil {
-		c.JSON(404, gin.H{"code": 1, "msg": "任务不存在"})
-		return
-	}
-	if !task.IsDeleted {
-		c.JSON(400, gin.H{"code": 1, "msg": "只能彻底删除回收站中的任务"})
-		return
-	}
-	if err := tc.DB.Delete(&task).Error; err != nil {
+	if err := tc.DB.Where("id = ? AND user_id = ?", id, userID).Delete(&models.Task{}).Error; err != nil {
 		c.JSON(500, gin.H{"code": 1, "msg": "彻底删除失败"})
 		return
 	}
-	c.JSON(200, gin.H{"code": 0, "msg": "彻底删除成功"})
+	c.JSON(200, gin.H{"code": 0, "msg": "已彻底删除"})
+}
+
+// 获取任务列表
+func (tc *TaskController) ListTasks(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	var tasks []models.Task
+	if err := tc.DB.Where("user_id = ?", userID).Order("created_at desc").Find(&tasks).Error; err != nil {
+		c.JSON(500, gin.H{"code": 1, "msg": "获取失败"})
+		return
+	}
+	c.JSON(200, gin.H{"code": 0, "data": tasks})
 }
 
 // getColorCodeByDueDate 根据截止日期返回颜色代码
