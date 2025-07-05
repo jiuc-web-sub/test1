@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../services/authService';
 
 export default function Login() {
@@ -34,6 +34,9 @@ export default function Login() {
         <button type="submit">登录</button>
       </form>
       {error && <div className="error">{error}</div>}
+      <div style={{ marginTop: 16 }}>
+        还没有账号？<Link to="/register">注册</Link>
+      </div>
     </div>
   );
 }

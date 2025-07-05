@@ -148,7 +148,7 @@ export default function Tasks() {
       </div>
       <div className="task-list">
         {tasks.map(task => (
-          <div key={task.id} className={`task-card ${getTaskColorClass(task.dueDate)}`}>
+          <div key={task.id} className="task-card">
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <strong>{task.title}</strong>
               <button
@@ -192,7 +192,7 @@ export default function Tasks() {
               截止时间：
               <input
                 type="date"
-                value={task.dueDate}
+                value={task.dueDate ? task.dueDate.split(' ')[0] : ''} // 只取日期部分
                 onChange={e => handleUpdateDueDate(task.id, e.target.value)}
                 style={{ marginLeft: 4 }}
               />
@@ -210,6 +210,14 @@ export default function Tasks() {
             )}
           </div>
         ))}
+      </div>
+      <div>
+        <h2>最近任务</h2>
+        <ul>
+          {tasks.filter(task => !task.isDeleted).map(task => (
+            <li key={task.id}>{task.title}（截止：{task.dueDate}）</li>
+          ))}
+        </ul>
       </div>
     </div>
   );

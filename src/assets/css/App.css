@@ -39,6 +39,7 @@
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
 }
+
 .nav-links a.active, .nav-links button.active, .nav-links a:hover, .nav-links button:hover {
   background: #10ac84;
   color: #fff;

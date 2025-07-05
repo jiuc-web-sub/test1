@@ -85,6 +85,13 @@ export default function Dashboard() {
           ))}
         </ul>
       </div>
+      <div>
+        {tasks.map(task => (
+          <div key={task.id} className="task-card">
+            {/* ... */}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { register } from '../services/authService';
 
 export default function Register() {
@@ -39,7 +39,9 @@ export default function Register() {
         />
         <button type="submit">注册</button>
       </form>
-      <button onClick={() => navigate('/login')} style={{ marginTop: 8 }}>已有账号？去登录</button>
+      <div style={{ marginTop: 16 }}>
+        已有账号？<Link to="/login">去登录</Link>
+      </div>
     </div>
   );
 }
