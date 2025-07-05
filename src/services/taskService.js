@@ -10,7 +10,9 @@ export const createTask = (data) => request.post('/tasks', data);
 export const updateTask = (id, data) => request.put(`/tasks/${id}`, data);
 
 // 软删除任务
-export const deleteTask = (id) => request.delete(`/tasks/${id}`);
+export function removeTask(id) {
+  return request.delete(`/tasks/${id}`);
+}
 
 // 彻底删除任务
 export const removeTaskPermanently = (id) => request.delete(`/tasks/permanent/${id}`);

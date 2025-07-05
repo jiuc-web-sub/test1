@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchTasks, createTask, updateTask, deleteTask } from '../services/taskService';
+import { fetchTasks, createTask, updateTask, removeTask } from '../services/taskService';
 
 function getTaskColorClass(dueDate) {
   const now = new Date();
@@ -54,12 +54,9 @@ export default function Tasks() {
   };
 
   const handleDeleteTask = async (id) => {
-    const res = await deleteTask(id); // 后端实现为软删除
-    if (res.data.code === 0) {
-      setTasks(tasks.filter(task => task.id !== id));
-    } else {
-      alert(res.data.msg || '删除失败');
-    }
+    if (!id) return; // 防止 undefined
+    await removeTask(id);
+    setTasks(tasks.filter(t => t.id !== id));
   };
 
   const handleUpdateDueDate = async (id, value) => {
@@ -104,6 +101,8 @@ export default function Tasks() {
     }
   };
 
+  const sortedTasks = [...tasks].sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
   return (
     <div>
       <h1>任务列表</h1>
@@ -122,6 +121,7 @@ export default function Tasks() {
             style={{ marginLeft: 4, fontSize: 16 }}
           />
         </label>
+        {/* 创建任务表单部分 */}
         <select
           value={newCategory}
           onChange={e => setNewCategory(e.target.value)}
@@ -147,7 +147,7 @@ export default function Tasks() {
         <button onClick={handleAddTask} style={{ marginLeft: 8 }}>添加任务</button>
       </div>
       <div className="task-list">
-        {tasks.map(task => (
+        {sortedTasks.map(task => (
           <div key={task.id} className="task-card">
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <strong>{task.title}</strong>

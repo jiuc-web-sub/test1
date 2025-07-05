@@ -23,7 +23,7 @@ export default function Register() {
   };
 
   return (
-    <div>
+    <div className="auth-container">
       <h1>注册</h1>
       <form onSubmit={handleRegister}>
         <input
