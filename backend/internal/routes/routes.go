@@ -11,22 +11,24 @@ import (
 func RegisterRoutes(r *gin.Engine, db *gorm.DB, jwtSecret string) {
 	authController := controllers.NewAuthController(db, jwtSecret)
 	taskController := controllers.NewTaskController(db)
+	userController := controllers.NewUserController(db) // ★新增这一行
 
-	api := r.Group("/api")
+	// 公共路由
+	r.POST("/api/auth/login", authController.Login)
+	r.POST("/api/auth/register", authController.Register)
+
+	// 需要鉴权的路由
+	auth := r.Group("/api")
+	auth.Use(middleware.JWTAuth(jwtSecret))
 	{
-		api.POST("/register", authController.Register)
-		api.POST("/login", authController.Login)
+		// 这里写需要登录才能访问的接口
+		auth.GET("/user/profile", userController.Profile)
 
-		// 需要鉴权的接口
-		auth := api.Group("/")
-		auth.Use(middleware.JWTAuth(jwtSecret))
-		{
-			auth.GET("/tasks", taskController.GetTasks)
-			auth.POST("/tasks", taskController.CreateTask)
-			auth.PUT("/tasks/:id", taskController.UpdateTask)
-			auth.DELETE("/tasks/:id", taskController.DeleteTask)
-			auth.DELETE("/tasks/permanent/:id", taskController.RemoveTaskPermanently)
-		}
+		auth.GET("/tasks", taskController.GetTasks)
+		auth.POST("/tasks", taskController.CreateTask)
+		auth.PUT("/tasks/:id", taskController.UpdateTask)
+		auth.DELETE("/tasks/:id", taskController.DeleteTask)
+		auth.DELETE("/tasks/permanent/:id", taskController.RemoveTaskPermanently)
 	}
 }
 

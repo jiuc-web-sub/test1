@@ -16,28 +16,32 @@
 }
 .navbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 16px 32px;
-  background: var(--color-primary, #1dd1a1);
+  background: #1dd1a1;
+  padding: 0 32px;
+  height: 64px;
+  z-index: 10;
+}
+.nav-links {
+  display: flex;
+  gap: 32px;
+  margin-left: 32px;
+}
+.nav-links a, .nav-links button {
   color: #fff;
-}
-.nav-links a {
-  margin-right: 32px;
-  color: var(--color-nav-text, #fff);
-  text-decoration: none;
+  background: transparent;
+  border: none;
+  font-size: 18px;
   font-weight: bold;
-  white-space: nowrap;
-  font-family: inherit;
-  font-size: 20px;
-  transition: color 0.2s, background 0.2s;
-  letter-spacing: 1px;
-  min-width: 64px; /* 防止跳动 */
-  display: inline-block;
-  text-align: center;
+  margin-right: 16px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
 }
-.nav-links a:last-child {
-  margin-right: 0;
+.nav-links a.active, .nav-links button.active, .nav-links a:hover, .nav-links button:hover {
+  background: #10ac84;
+  color: #fff;
 }
 .nav-user {
   display: flex;
@@ -191,4 +195,33 @@ button:hover {
   font-family: inherit;
   font-size: 20px;
   letter-spacing: 1px;
+}
+
+/* Auth Container */
+.auth-container {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 32px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.auth-container input, .auth-container button {
+  display: block;
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 10px;
+  font-size: 16px;
+}
+.auth-container button {
+  background: #1dd1a1;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.auth-container button:hover {
+  background: #10ac84;
 }

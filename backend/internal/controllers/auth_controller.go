@@ -108,7 +108,8 @@ func (ac *AuthController) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{
+	// 登录成功后返回
+	c.JSON(http.StatusOK, gin.H{
 		"code": 0,
 		"msg":  "登录成功",
 		"data": gin.H{
