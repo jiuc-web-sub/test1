@@ -3,25 +3,29 @@ import { useEffect, useState } from 'react';
 
 export default function Trash() {
   const [tasks, setTasks] = useState([]);
-  useEffect(() => {
+
+  const loadTasks = () => {
     fetchTasks().then(res => {
       if (res.data.code === 0) setTasks(res.data.data.filter(t => t.isDeleted));
     });
+  };
+
+  useEffect(() => {
+    loadTasks();
   }, []);
 
-  // 恢复任务
   const handleRestore = async (id) => {
     const task = tasks.find(t => t.id === id);
     const res = await updateTask(id, { ...task, isDeleted: false });
     if (res.data.code === 0) {
-      setTasks(tasks.filter(t => t.id !== id));
+      loadTasks();
     }
   };
 
   const handleRemove = async (id) => {
     const res = await removeTaskPermanently(id);
     if (res.data.code === 0) {
-      setTasks(tasks.filter(t => t.id !== id));
+      loadTasks();
     }
   };
 
@@ -36,7 +40,7 @@ export default function Trash() {
               <button onClick={() => handleRestore(task.id)} style={{ marginLeft: 8 }}>恢复</button>
               <button onClick={() => handleRemove(task.id)} style={{ marginLeft: 8, color: 'red' }}>彻底删除</button>
             </div>
-            <div>截止时间：{task.dueDate}</div>
+            <div>截止日期：{task.dueDate ? task.dueDate.split('T')[0] : ''}</div>
           </div>
         ))}
       </div>

@@ -87,6 +87,14 @@ export default function Tasks() {
     }
   };
 
+  const handleCategoryChange = async (id, value) => {
+    const task = tasks.find(t => t.id === id);
+    const res = await updateTask(id, { ...task, category: value });
+    if (res.data.code === 0) {
+      setTasks(tasks.map(t => t.id === id ? { ...t, category: value } : t));
+    }
+  };
+
   return (
     <div>
       <h1>任务列表</h1>
@@ -147,7 +155,19 @@ export default function Tasks() {
               >删除</button>
             </div>
             <div style={{ marginTop: 8, display: 'flex', gap: 24, alignItems: 'center' }}>
-              <span style={{ color: '#888', fontSize: 13 }}>分类：{task.category || '无'}</span>
+              <span style={{ color: '#888', fontSize: 13 }}>
+                分类：
+                <select
+                  value={task.category || ''}
+                  onChange={e => handleCategoryChange(task.id, e.target.value)}
+                  style={{ marginLeft: 4 }}
+                >
+                  <option value="">未分类</option>
+                  <option value="工作">工作</option>
+                  <option value="学习">学习</option>
+                  <option value="生活">生活</option>
+                </select>
+              </span>
               <span style={{ color: '#888', fontSize: 13 }}>
                 标签：
                 <input

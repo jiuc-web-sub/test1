@@ -21,6 +21,7 @@ type Task struct {
 	Category    string `json:"category"`
 	Tags        string `json:"tags"`      // 用逗号分隔的标签
 	IsDeleted   bool   `json:"isDeleted"` // 软删除标记
+	Completed   bool   `json:"completed"` // 新增：任务完成状态
 	UserID      uint   `json:"userId"`
 }
 

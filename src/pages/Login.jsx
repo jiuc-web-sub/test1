@@ -15,8 +15,6 @@ export default function Login() {
         localStorage.setItem('token', res.data.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.data.user));
         navigate('/');
-      } else {
-        alert(res.data.msg || '登录失败');
       }
     } catch (e) {
       alert('登录请求失败');

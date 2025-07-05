@@ -187,4 +187,8 @@ button:hover {
   padding: 16px;
   margin-bottom: 16px;
   transition: background 0.2s, color 0.2s;
+  min-width: 180px;
+  font-family: inherit;
+  font-size: 20px;
+  letter-spacing: 1px;
 }

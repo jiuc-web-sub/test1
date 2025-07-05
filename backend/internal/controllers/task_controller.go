@@ -50,6 +50,7 @@ func (tc *TaskController) CreateTask(c *gin.Context) {
 		Category    string `json:"category"`
 		Tags        string `json:"tags"`
 		IsDeleted   bool   `json:"isDeleted"`
+		Completed   bool   `json:"completed"` // 新增
 	}
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": 1, "msg": "参数错误"})
@@ -69,6 +70,7 @@ func (tc *TaskController) CreateTask(c *gin.Context) {
 		Category:    input.Category,
 		Tags:        input.Tags,
 		IsDeleted:   input.IsDeleted,
+		Completed:   input.Completed, // 新增
 		UserID:      userID.(uint),
 	}
 
