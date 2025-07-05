@@ -15,18 +15,13 @@ export default function Trash() {
   }, []);
 
   const handleRestore = async (id) => {
-    const task = tasks.find(t => t.id === id);
-    const res = await updateTask(id, { ...task, isDeleted: false });
-    if (res.data.code === 0) {
-      loadTasks();
-    }
+    await updateTask(id, { isDeleted: false });
+    setTasks(tasks.filter(t => t.id !== id));
   };
 
-  const handleRemove = async (id) => {
-    const res = await removeTaskPermanently(id);
-    if (res.data.code === 0) {
-      loadTasks();
-    }
+  const handlePermanentDelete = async (id) => {
+    await removeTaskPermanently(id);
+    setTasks(tasks.filter(t => t.id !== id));
   };
 
   return (
@@ -38,7 +33,7 @@ export default function Trash() {
             <div>
               <strong>{task.title}</strong>
               <button onClick={() => handleRestore(task.id)} style={{ marginLeft: 8 }}>恢复</button>
-              <button onClick={() => handleRemove(task.id)} style={{ marginLeft: 8, color: 'red' }}>彻底删除</button>
+              <button onClick={() => handlePermanentDelete(task.id)} style={{ marginLeft: 8, color: 'red' }}>彻底删除</button>
             </div>
             <div>截止日期：{task.dueDate ? task.dueDate.split('T')[0] : ''}</div>
           </div>

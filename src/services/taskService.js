@@ -17,3 +17,6 @@ export function removeTask(id) {
 // 彻底删除任务
 export const removeTaskPermanently = (id) => request.delete(`/tasks/permanent/${id}`);
 
+// 恢复任务
+export const restoreTask = (id) => request.put(`/tasks/${id}/restore`);
+

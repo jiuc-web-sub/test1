@@ -54,7 +54,7 @@ export default function Tasks() {
   };
 
   const handleDeleteTask = async (id) => {
-    if (!id) return; // 防止 undefined
+    if (!id) return;
     await removeTask(id);
     setTasks(tasks.filter(t => t.id !== id));
   };
@@ -93,12 +93,10 @@ export default function Tasks() {
     }
   };
 
-  const handleCategoryChange = async (id, value) => {
-    const task = tasks.find(t => t.id === id);
-    const res = await updateTask(id, { ...task, category: value });
-    if (res.data.code === 0) {
-      setTasks(tasks.map(t => t.id === id ? { ...t, category: value } : t));
-    }
+  const handleCategoryChange = async (id, newCategory) => {
+    if (!id) return;
+    await updateTask(id, { category: newCategory });
+    setTasks(tasks.map(t => t.id === id ? { ...t, category: newCategory } : t));
   };
 
   const sortedTasks = [...tasks].sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
@@ -147,7 +145,7 @@ export default function Tasks() {
         <button onClick={handleAddTask} style={{ marginLeft: 8 }}>添加任务</button>
       </div>
       <div className="task-list">
-        {sortedTasks.map(task => (
+        {tasks.map(task => (
           <div key={task.id} className="task-card">
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <strong>{task.title}</strong>
