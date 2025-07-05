@@ -11,7 +11,7 @@ import (
 func RegisterRoutes(r *gin.Engine, db *gorm.DB, jwtSecret string) {
 	authController := controllers.NewAuthController(db, jwtSecret)
 	taskController := controllers.NewTaskController(db)
-	userController := controllers.NewUserController(db) // ★新增这一行
+	userController := controllers.NewUserController(db) // ★新增
 
 	// 公共路由
 	r.POST("/api/auth/login", authController.Login)
@@ -21,9 +21,7 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB, jwtSecret string) {
 	auth := r.Group("/api")
 	auth.Use(middleware.JWTAuth(jwtSecret))
 	{
-		// 这里写需要登录才能访问的接口
 		auth.GET("/user/profile", userController.Profile)
-
 		auth.GET("/tasks", taskController.GetTasks)
 		auth.POST("/tasks", taskController.CreateTask)
 		auth.PUT("/tasks/:id", taskController.UpdateTask)

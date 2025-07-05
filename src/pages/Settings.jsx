@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { SettingsContext } from '../contexts/SettingsContext';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../contexts/Themecontext';
 
 const fontOptions = ['Arial', 'Verdana', 'Georgia', 'Courier New', 'Comic Sans MS'];
 
