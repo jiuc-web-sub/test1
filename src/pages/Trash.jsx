@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { fetchTasks, updateTask, removeTaskPermanently } from '../services/taskService';
+import { useEffect, useState } from 'react';
 
 export default function Trash() {
   const [tasks, setTasks] = useState([]);
@@ -14,8 +14,6 @@ export default function Trash() {
     const res = await updateTask(id, { ...task, isDeleted: false });
     if (res.data.code === 0) {
       setTasks(tasks.filter(t => t.id !== id));
-    } else {
-      alert(res.data.msg || '恢复失败');
     }
   };
 
@@ -23,8 +21,6 @@ export default function Trash() {
     const res = await removeTaskPermanently(id);
     if (res.data.code === 0) {
       setTasks(tasks.filter(t => t.id !== id));
-    } else {
-      alert(res.data.msg || '彻底删除失败');
     }
   };
 

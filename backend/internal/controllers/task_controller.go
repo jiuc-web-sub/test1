@@ -122,21 +122,21 @@ func (tc *TaskController) UpdateTask(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "更新成功", "data": task})
 }
 
-// 删除任务
+// 软删除任务
 func (tc *TaskController) DeleteTask(c *gin.Context) {
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"code": 1, "msg": "未授权"})
-		return
-	}
-
+	userID, _ := c.Get("userID")
 	id := c.Param("id")
-	if err := tc.DB.Where("id = ? AND user_id = ?", id, userID).Delete(&models.Task{}).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"code": 1, "msg": "删除任务失败"})
+	var task models.Task
+	if err := tc.DB.Where("id = ? AND user_id = ?", id, userID).First(&task).Error; err != nil {
+		c.JSON(404, gin.H{"code": 1, "msg": "任务不存在"})
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "删除成功"})
+	task.IsDeleted = true
+	if err := tc.DB.Save(&task).Error; err != nil {
+		c.JSON(500, gin.H{"code": 1, "msg": "删除失败"})
+		return
+	}
+	c.JSON(200, gin.H{"code": 0, "msg": "已移入回收站"})
 }
 
 // UploadTaskResource 上传任务相关资料

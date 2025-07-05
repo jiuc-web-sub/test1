@@ -20,6 +20,8 @@
   /* 其它变量 */
   --color-card-bg: #fff;
   --color-card-text: #222;
+  --color-nav-bg: #1dd1a1;
+  --color-nav-text: #fff;
 }
 
 /* 暗色主题覆盖 */
@@ -35,4 +37,7 @@
   /* 其它变量 */
   --color-card-bg: #222;
   --color-card-text: #fff;
+  --color-card-border: #444;
+  --color-nav-bg: #222;
+  --color-nav-text: #fff;
 }
